@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum STATUS {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+model ResourceType {
+  id        Int        @id @default(autoincrement())
+  name      String
+  resources Resource[]
+}
+
+model Resource {
+  id             Int                     @id @default(autoincrement())
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  name           String
+  description    String
+  resourceUrl    String                  @db.VarChar(2048)
+  imageUrl       String?                 @db.VarChar(2048)
+  status         STATUS                  @default(ACTIVE)
+  resourceType   ResourceType            @relation(fields: [resourceTypeId], references: [id])
+  resourceTypeId Int
+  eventItems     EventItemsOnResources[]
+  reviews        Review[]                @relation("ResourceReview")
+  likes          Like[]                  @relation("ResourceLike")
+}
+
+model EventItem {
+  id          Int                     @id @default(autoincrement())
+  name        String
+  description String
+  event       Event                   @relation(fields: [eventId], references: [id])
+  eventId     Int
+  parentId    Int?
+  parent      EventItem?              @relation("EventItemTree", fields: [parentId], references: [id])
+  children    EventItem[]             @relation("EventItemTree")
+  resources   EventItemsOnResources[]
+  reviews     Review[]                @relation("EventItemReview")
+}
+
+model Event {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String
+  eventItems  EventItem[]
+  reviews     Review[]    @relation("EventReview")
+}
+
+model EventItemsOnResources {
+  eventItem   EventItem @relation(fields: [eventItemId], references: [id])
+  eventItemId Int
+  resource    Resource  @relation(fields: [resourceId], references: [id])
+  resourceId  Int
+  assignedAt  DateTime  @default(now())
+
+  @@id([eventItemId, resourceId])
+}
+
+enum ReviewableType {
+  Resource
+  Event
+  EventItem
+}
+
+model Review {
+  id          Int     @id @default(autoincrement())
+  title       String?
+  description String
+  rate        Int
+  status      STATUS  @default(ACTIVE)
+
+  resource  Resource?  @relation("ResourceReview", fields: [reviewableId], references: [id], map: "Resource_reviewableId")
+  event     Event?     @relation("EventReview", fields: [reviewableId], references: [id], map: "Event_reviewableId")
+  eventItem EventItem? @relation("EventItemReview", fields: [reviewableId], references: [id], map: "EventItem_reviewableId")
+
+  reviewableId   Int
+  reviewableType ReviewableType
+
+  likes Like[] @relation("ReviewLike")
+}
+
+enum LikableType {
+  Resource
+  Review
+}
+
+enum LIKE_TYPE {
+  LIKE
+  UNLIKE
+}
+
+model Like {
+  id       Int       @id @default(autoincrement())
+  likeType LIKE_TYPE
+
+  resource Resource? @relation("ResourceLike", fields: [likableId], references: [id], map: "Resource_likableId")
+  review   Review?   @relation("ReviewLike", fields: [likableId], references: [id], map: "Review_likableId")
+
+  likableId   Int
+  likableType LikableType
+}

@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Resource" ALTER COLUMN "imageUrl" DROP NOT NULL,
+ALTER COLUMN "status" SET DEFAULT 'ACTIVE';
+
+-- AlterTable
+ALTER TABLE "Review" ALTER COLUMN "title" DROP NOT NULL,
+ALTER COLUMN "status" SET DEFAULT 'ACTIVE';
