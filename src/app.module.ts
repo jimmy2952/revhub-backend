@@ -1,19 +1,29 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
 import { RouterModule } from '@nestjs/core'
 import { ConfigModule } from '@nestjs/config'
+import { SharedModule } from 'src/shared.module'
 import { HttpRequestLoggerMiddleware } from './common/middleware/http-request-logger.middleware'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
-import { ResourceTypesModule } from './resource-types/resource-types.module'
+import { AdminModule } from './admin/admin.module'
+import { ResourceTypesModule } from './admin/resource-types/resource-types.module'
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    SharedModule,
+    AdminModule,
     ResourceTypesModule,
     RouterModule.register([
       {
-        path: 'resource-types',
-        module: ResourceTypesModule,
+        path: 'admin',
+        module: AdminModule,
+        children: [
+          {
+            path: 'resource-types',
+            module: ResourceTypesModule,
+          },
+        ],
       },
     ]),
   ],
