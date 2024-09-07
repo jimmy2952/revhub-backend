@@ -26,23 +26,23 @@ export class ResourceTypesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.resourceTypesService.resourceType({ id })
+  findOne(@Param('id') id: string) {
+    return this.resourceTypesService.resourceType({ id: Number(id) })
   }
 
   @Put(':id')
   update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateResourceTypeDto: UpdateResourceTypeDto,
   ) {
     return this.resourceTypesService.updateResourceType({
-      where: { id },
+      where: { id: Number(id) },
       data: updateResourceTypeDto,
     })
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.resourceTypesService.deleteResourceType({ id })
+  remove(@Param('id') id: string) {
+    return this.resourceTypesService.deleteResourceType({ id: Number(id) })
   }
 }
