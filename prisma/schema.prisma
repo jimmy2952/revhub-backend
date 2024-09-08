@@ -23,18 +23,21 @@ enum STATUS {
 model ResourceType {
   id        Int        @id @default(autoincrement())
   name      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   resources Resource[]
 }
 
 model Resource {
-  id             Int                     @id @default(autoincrement())
-  createdAt      DateTime                @default(now())
-  updatedAt      DateTime                @updatedAt
-  name           String
-  description    String
-  resourceUrl    String                  @db.VarChar(2048)
-  imageUrl       String?                 @db.VarChar(2048)
-  status         STATUS                  @default(ACTIVE)
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  description String
+  resourceUrl String   @db.VarChar(2048)
+  imageUrl    String?  @db.VarChar(2048)
+  status      STATUS   @default(ACTIVE)
+
   resourceType   ResourceType            @relation(fields: [resourceTypeId], references: [id])
   resourceTypeId Int
   eventItems     EventItemsOnResources[]
@@ -43,24 +46,30 @@ model Resource {
 }
 
 model EventItem {
-  id          Int                     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   description String
-  event       Event                   @relation(fields: [eventId], references: [id])
+  event       Event    @relation(fields: [eventId], references: [id])
   eventId     Int
   parentId    Int?
-  parent      EventItem?              @relation("EventItemTree", fields: [parentId], references: [id])
-  children    EventItem[]             @relation("EventItemTree")
-  resources   EventItemsOnResources[]
-  reviews     Review[]                @relation("EventItemReview")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  parent    EventItem?              @relation("EventItemTree", fields: [parentId], references: [id])
+  children  EventItem[]             @relation("EventItemTree")
+  resources EventItemsOnResources[]
+  reviews   Review[]                @relation("EventItemReview")
 }
 
 model Event {
-  id          Int         @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   name        String
   description String
-  eventItems  EventItem[]
-  reviews     Review[]    @relation("EventReview")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  eventItems EventItem[]
+  reviews    Review[]    @relation("EventReview")
 }
 
 model EventItemsOnResources {
@@ -69,6 +78,8 @@ model EventItemsOnResources {
   resource    Resource  @relation(fields: [resourceId], references: [id])
   resourceId  Int
   assignedAt  DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@id([eventItemId, resourceId])
 }
@@ -80,11 +91,13 @@ enum ReviewableType {
 }
 
 model Review {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   title       String?
   description String
   rate        Int
-  status      STATUS  @default(ACTIVE)
+  status      STATUS   @default(ACTIVE)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   resource  Resource?  @relation("ResourceReview", fields: [reviewableId], references: [id], map: "Resource_reviewableId")
   event     Event?     @relation("EventReview", fields: [reviewableId], references: [id], map: "Event_reviewableId")
@@ -107,8 +120,10 @@ enum LIKE_TYPE {
 }
 
 model Like {
-  id       Int       @id @default(autoincrement())
-  likeType LIKE_TYPE
+  id        Int       @id @default(autoincrement())
+  likeType  LIKE_TYPE
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   resource Resource? @relation("ResourceLike", fields: [likableId], references: [id], map: "Resource_likableId")
   review   Review?   @relation("ReviewLike", fields: [likableId], references: [id], map: "Review_likableId")
