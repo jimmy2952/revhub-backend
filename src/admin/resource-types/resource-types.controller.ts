@@ -8,7 +8,10 @@ import {
   Param,
   Delete,
 } from '@nestjs/common'
-import { CreateResourceEventDto, UpdateResourceTypeDto } from './dto'
+import {
+  CreateResourceEventDto,
+  UpdateResourceTypeDto,
+} from './resource-type.dto'
 import { ResourceTypesService } from './resource-types.service'
 
 @Controller()
