@@ -7,6 +7,7 @@ import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { AdminModule } from './admin/admin.module'
 import { ResourceTypesModule } from './admin/resource-types/resource-types.module'
+import { ResourcesModule } from './admin/resources/resources.module'
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ResourceTypesModule } from './admin/resource-types/resource-types.modul
     SharedModule,
     AdminModule,
     ResourceTypesModule,
+    ResourcesModule,
     RouterModule.register([
       {
         path: 'admin',
@@ -22,6 +24,10 @@ import { ResourceTypesModule } from './admin/resource-types/resource-types.modul
           {
             path: 'resource-types',
             module: ResourceTypesModule,
+          },
+          {
+            path: 'resources',
+            module: ResourcesModule,
           },
         ],
       },
