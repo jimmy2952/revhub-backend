@@ -6,14 +6,6 @@ import { ResourceType, Prisma } from '@prisma/client'
 export class ResourceTypesService {
   constructor(private prisma: PrismaService) {}
 
-  async resourceType(
-    resourceTypeWhereUniqueInput: Prisma.ResourceTypeWhereUniqueInput,
-  ): Promise<ResourceType | null> {
-    return this.prisma.resourceType.findUnique({
-      where: resourceTypeWhereUniqueInput,
-    })
-  }
-
   async resourceTypes(params: {
     skip?: number
     take?: number
@@ -28,6 +20,14 @@ export class ResourceTypesService {
       cursor,
       where,
       orderBy,
+    })
+  }
+
+  async resourceType(
+    resourceTypeWhereUniqueInput: Prisma.ResourceTypeWhereUniqueInput,
+  ): Promise<ResourceType | null> {
+    return this.prisma.resourceType.findUnique({
+      where: resourceTypeWhereUniqueInput,
     })
   }
 

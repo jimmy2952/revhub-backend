@@ -15,11 +15,6 @@ import { ResourceTypesService } from './resource-types.service'
 export class ResourceTypesController {
   constructor(private readonly resourceTypesService: ResourceTypesService) {}
 
-  @Post()
-  create(@Body() createResourceTypeDto: CreateResourceEventDto) {
-    return this.resourceTypesService.createResourceType(createResourceTypeDto)
-  }
-
   @Get()
   findAll(@Query() query) {
     return this.resourceTypesService.resourceTypes(query)
@@ -28,6 +23,11 @@ export class ResourceTypesController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.resourceTypesService.resourceType({ id: Number(id) })
+  }
+
+  @Post()
+  create(@Body() createResourceTypeDto: CreateResourceEventDto) {
+    return this.resourceTypesService.createResourceType(createResourceTypeDto)
   }
 
   @Put(':id')
